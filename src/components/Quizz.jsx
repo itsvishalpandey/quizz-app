@@ -96,6 +96,14 @@ function Quiz({ quizData }) {
         </div>
       ) : (
         <div>
+          <div>
+            <progress
+              className="w-full"
+              id="progress-bar"
+              max={quizData.length}
+              value={currentQuestionIndex}
+            />
+          </div>
           <div className="flex justify-between mt-4 mb-8">
             <p className="font-bold text-gray-500 text-xl">
               Completed: {completedQuestion}
