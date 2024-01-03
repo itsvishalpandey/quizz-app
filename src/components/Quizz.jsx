@@ -10,6 +10,9 @@ function Quiz({ quizData }) {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [timer, setTimer] = useState(10);
 
+  const [completedQuestion, setCompletedQuestion] = useState(0);
+  const [remainingQuestion, setRemainingQuestion] = useState(quizData.length);
+
   const handleAnswer = (answer) => {
     const updatedAnswers = [...userAnswers];
     updatedAnswers[currentQuestionIndex] = answer;
@@ -36,9 +39,13 @@ function Quiz({ quizData }) {
   const handleNext = () => {
     if (currentQuestionIndex < quizData.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
+      setCompletedQuestion((prev) => prev + 1);
+      setRemainingQuestion((prev) => prev - 1);
     } else {
       setShowResults(true);
       setQuizCompleted(true);
+      setCompletedQuestion((prev) => prev + 1);
+      setRemainingQuestion((prev) => prev - 1);
     }
     setTimer(10);
   };
@@ -46,6 +53,8 @@ function Quiz({ quizData }) {
   const handlePrev = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex((prev) => prev - 1);
+      setCompletedQuestion((prev) => prev - 1);
+      setRemainingQuestion((prev) => prev + 1);
     }
   };
 
@@ -71,9 +80,9 @@ function Quiz({ quizData }) {
   console.log(userAnswers);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className=" w-4/6 py-6 px-8 shadow-2xl">
       {showResults ? (
-        <div className="text-center">
+        <div className="text-center py-6">
           <h1 className="text-2xl font-bold mb-4">Result</h1>
           <p className="text-xl">
             Your score is {calculateResult()} out of {quizData.length}
@@ -87,10 +96,18 @@ function Quiz({ quizData }) {
         </div>
       ) : (
         <div>
-          <h2 className="text-xl font-semibold mb-4">
+          <div className="flex justify-between mt-4 mb-8">
+            <p className="font-bold text-gray-500 text-xl">
+              Completed: {completedQuestion}
+            </p>
+            <p className="font-bold text-gray-500 text-xl">
+              Remaining: {remainingQuestion}
+            </p>
+          </div>
+          <h2 className="text-2xl font-semibold mb-4">
             {quizData[currentQuestionIndex].question}
           </h2>
-          <ul>
+          <ul className="font-semibold">
             {quizData[currentQuestionIndex].options.map((option, index) => (
               <li
                 key={index}
@@ -109,30 +126,34 @@ function Quiz({ quizData }) {
               </li>
             ))}
           </ul>
-          <div className="mt-4">
-            <button
-              onClick={handlePrev}
-              disabled={currentQuestionIndex === 0}
-              className={`mr-2 ${
-                currentQuestionIndex === 0
-                  ? "opacity-50 cursor-not-allowed"
-                  : "bg-gray-500 hover:bg-gray-700"
-              } text-white font-bold py-2 px-4 rounded`}
-            >
-              Prev
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={userAnswers[currentQuestionIndex] === null}
-              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-                userAnswers[currentQuestionIndex] === null
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
-              }`}
-            >
-              Next
-            </button>
-            <div>Time left: {timer} sec</div>
+          <div className="flex justify-between mt-6">
+            <div>
+              <button
+                onClick={handlePrev}
+                disabled={currentQuestionIndex === 0}
+                className={`mr-2 ${
+                  currentQuestionIndex === 0
+                    ? "opacity-50 bg-gray-400 cursor-not-allowed"
+                    : "bg-gray-700 hover:bg-gray-500"
+                } text-white font-bold py-2 px-8 rounded`}
+              >
+                Prev
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={userAnswers[currentQuestionIndex] === null}
+                className={`bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-8 rounded ${
+                  userAnswers[currentQuestionIndex] === null
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+              >
+                Next
+              </button>
+            </div>
+            <div>
+              <div className="font-bold text-xl">Time left: {timer} sec</div>
+            </div>
           </div>
         </div>
       )}
